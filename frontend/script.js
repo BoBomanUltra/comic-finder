@@ -1,35 +1,25 @@
-// This is the "waiter" - it carries messages between the dining room (frontend) 
-// and the kitchen (backend)
-
-// Wait for the page to fully load
+// Comic Finder - Home Page JavaScript
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Frontend loaded successfully!');
+    console.log('Comic Finder loaded!');
     
-    // Get the button and result paragraph
-    const testBtn = document.getElementById('testBtn');
-    const testResult = document.getElementById('testResult');
+    const searchForm = document.getElementById('searchForm');
+    const uploadBtn = document.getElementById('uploadBtn');
     
-    // When button is clicked, test the connection
-    testBtn.addEventListener('click', async () => {
-        testResult.textContent = 'Testing connection...';
-        testResult.className = '';
+    // Handle search form submission
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         
-        try {
-            // Make a request to our backend
-            // fetch() is like sending a waiter to the kitchen with an order
-            const response = await fetch('http://localhost:3000/api/test');
-            
-            // Get the response back (like the waiter bringing food)
-            const data = await response.json();
-            
-            // Show success message
-            testResult.textContent = `✅ ${data.message} (Time: ${data.timestamp})`;
-            testResult.className = 'success';
-            
-        } catch (error) {
-            // If something went wrong
-            testResult.textContent = `❌ Error: ${error.message}. Is the backend running?`;
-            testResult.className = 'error';
+        const description = document.getElementById('comicDescription').value.trim();
+        
+        if (description) {
+            sessionStorage.setItem('comicQuery', description);
+            window.location.href = 'chat.html';
         }
+    });
+    
+    // Handle upload button (placeholder for now)
+    uploadBtn.addEventListener('click', () => {
+        alert('Upload feature coming soon! (Admin only)');
+        // TODO: Implement admin authentication and upload functionality
     });
 });

@@ -3,26 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comic Tracker</title>
+    <title>Comic Finder</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div class="admin-section">
+        <button id="uploadBtn" class="upload-btn">Upload Comic (Admin)</button>
+    </div>
+    
+
     <div class="container">
-        <h1>🎨 Comic Tracker</h1>
-        <p class="subtitle">Find your forgotten manga, manhwa, and manhua</p>
+        <header>
+            <h1>Comic Finder</h1>
+            <p class="subtitle">Can't remember that manga/manhwa/manhua? Describe it, we'll find it.</p>
+        </header>
 
-        <!-- Test section to see if backend is connected -->
-        <div class="test-section">
-            <h2>Connection Test</h2>
-            <button id="testBtn">Test Backend Connection</button>
-            <p id="testResult"></p>
-        </div>
-
-        <!-- This will be our search form later -->
+        <!-- Main search section -->
         <div class="search-section">
-            <h2>Search (Coming Soon)</h2>
-            <p>We'll build the search form in Phase 4!</p>
+            <form id="searchForm">
+                <div class="search-input-container">
+                    <textarea 
+                        id="comicDescription" 
+                        placeholder="Describe your comic... (e.g., 'MC can level up like a game, set in Korea with dungeons')"
+                        rows="4"
+                        required
+                    ></textarea>
+                </div>
+                <button type="submit" class="search-btn">Find My Comic →</button>
+            </form>
         </div>
+
+        
     </div>
 
     <script src="script.js"></script>

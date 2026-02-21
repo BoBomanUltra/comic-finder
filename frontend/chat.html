@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Comic Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container chat-container">
+        <!-- Header with back button -->
+        <header class="chat-header">
+            <button id="backBtn" class="back-btn">← Back</button>
+            <h1>Comic Finder</h1>
+        </header>
+
+        <!-- Chat messages area -->
+        <div id="chatMessages" class="chat-messages">
+            <!-- User's original search -->
+            <div class="message user-message">
+                <div class="message-content" id="userQuery">
+                    <!-- User's description will be inserted here -->
+                </div>
+            </div>
+
+            <!-- AI response will appear here -->
+            <div class="message ai-message">
+                <div class="message-content">
+                    <div class="loading">Searching for your comic...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chat.js"></script>
+</body>
+</html>
