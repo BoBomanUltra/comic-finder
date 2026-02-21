@@ -53,6 +53,41 @@ app.post('/api/test-ai', async (req, res) => {
     }
 });
 
+app.post('/api/verify-admin', (req, res) => {
+    const { password } = req.body;
+    
+    if (password === process.env.ADMIN_PASSWORD) {
+        return res.json({ 
+            success: true,
+            message: 'Access granted'
+        });
+    }
+    
+    res.status(401).json({ 
+        success: false,
+        error: 'Invalid password'
+    });
+});
+
+app.post('/api/research-comic', async (req, res) => {
+    const { comicName } = req.body;
+    
+    // TODO: We'll build the real Agent A logic later
+    // For now, simulate a delay and return mock data
+    
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+    
+    res.json({
+        success: true,
+        comic: {
+            primary_name: comicName,
+            genres: ['Action', 'Fantasy'],
+            settings: ['Isekai', 'Modern'],
+            message: 'Mock data - real Agent A coming soon!'
+        }
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

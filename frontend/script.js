@@ -11,6 +11,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingTagsContainer = document.getElementById('settingTags');
     const genresTagsContainer = document.getElementById('genresTags');
     
+    // Admin modal elements
+    const adminModal = document.getElementById('adminModal');
+    const closeModal = document.getElementById('closeModal');
+    const passwordForm = document.getElementById('passwordForm');
+    const passwordError = document.getElementById('passwordError');
+    
+    // Admin panel elements
+    const adminPanel = document.getElementById('adminPanel');
+    const closeAdminPanel = document.getElementById('closeAdminPanel');
+    const comicResearchForm = document.getElementById('comicResearchForm');
+    const researchStatus = document.getElementById('researchStatus');
+    const researchBtn = document.getElementById('researchBtn');
+    
     const settingOptions = [
         'Isekai', 'Time Regression', 'Reincarnation', 'Medieval', 'Fantasy', 
         'Modern', 'Post-Apocalyptic', 'Sci-Fi', 'Historical', 'School', 
@@ -130,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTagInput(settingInput, settingDropdown, settingTagsContainer, settingOptions, selectedSettings);
     setupTagInput(genresInput, genresDropdown, genresTagsContainer, genreOptions, selectedGenres);
     
+    // Search form handler
     searchForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
@@ -146,7 +160,112 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'chat.html';
     });
     
+    // Upload button - opens password modal
     uploadBtn.addEventListener('click', () => {
-        alert('Upload feature coming soon! (Admin only)');
+        adminModal.classList.add('show');
+        document.getElementById('adminPassword').value = '';
+        passwordError.textContent = '';
     });
-});            
+
+    // Close password modal
+    closeModal.addEventListener('click', () => {
+        adminModal.classList.remove('show');
+    });
+
+    // Click outside password modal to close
+    adminModal.addEventListener('click', (e) => {
+        if (e.target === adminModal) {
+            adminModal.classList.remove('show');
+        }
+    });
+
+    // Password form handler
+    passwordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const password = document.getElementById('adminPassword').value;
+        passwordError.textContent = '';
+        
+        try {
+            const response = await fetch('http://localhost:3000/api/verify-admin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Close password modal, open admin panel
+                adminModal.classList.remove('show');
+                adminPanel.classList.add('show');
+                document.getElementById('comicName').value = '';
+                researchStatus.textContent = '';
+                researchStatus.className = 'research-status';
+            } else {
+                passwordError.textContent = 'Invalid password';
+            }
+        } catch (error) {
+            passwordError.textContent = 'Connection error. Is the backend running?';
+        }
+    });
+
+    // Close admin panel
+    closeAdminPanel.addEventListener('click', () => {
+        adminPanel.classList.remove('show');
+    });
+
+    // Click outside admin panel to close
+    adminPanel.addEventListener('click', (e) => {
+        if (e.target === adminPanel) {
+            adminPanel.classList.remove('show');
+        }
+    });
+
+    // Comic research form handler
+    comicResearchForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const comicName = document.getElementById('comicName').value.trim();
+        
+        // Show loading state
+        researchStatus.textContent = 'Agent A is researching "' + comicName + '"... This may take 30-60 seconds.';
+        researchStatus.className = 'research-status loading';
+        researchBtn.disabled = true;
+        researchBtn.textContent = 'Researching...';
+        
+        try {
+            const response = await fetch('http://localhost:3000/api/research-comic', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ comicName })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Success! Show result
+                researchStatus.textContent = `✓ Successfully added "${data.comic.primary_name}" to database!\n\nFound ${data.comic.genres?.length || 0} genres, ${data.comic.settings?.length || 0} settings.`;
+                researchStatus.className = 'research-status success';
+                
+                // Reset form for next entry
+                document.getElementById('comicName').value = '';
+            } else {
+                // Error
+                researchStatus.textContent = '✗ Error: ' + data.error;
+                researchStatus.className = 'research-status error';
+            }
+        } catch (error) {
+            researchStatus.textContent = '✗ Connection error: ' + error.message;
+            researchStatus.className = 'research-status error';
+        } finally {
+            // Re-enable button
+            researchBtn.disabled = false;
+            researchBtn.textContent = 'Research & Add Comic';
+        }
+    });
+});       

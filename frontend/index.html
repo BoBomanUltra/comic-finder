@@ -98,6 +98,56 @@
         
     </div>
 
+    <!-- Admin Password Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>Admin Access</h2>
+            <p>Enter admin password to upload comics</p>
+            
+            <form id="passwordForm">
+                <input 
+                    type="password" 
+                    id="adminPassword" 
+                    placeholder="Enter password"
+                    class="password-input"
+                    required
+                />
+                <button type="submit" class="modal-submit-btn">Submit</button>
+            </form>
+            
+            <div id="passwordError" class="password-error"></div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminPanel" class="modal">
+        <div class="modal-content admin-panel-content">
+            <button class="modal-close" id="closeAdminPanel">×</button>
+            <h2>Add Comic to Database</h2>
+            <p>Enter the comic name and Agent A will research it</p>
+            
+            <form id="comicResearchForm">
+                <div class="form-group">
+                    <label for="comicName">Comic Name</label>
+                    <input 
+                        type="text" 
+                        id="comicName" 
+                        placeholder="e.g., Solo Leveling"
+                        class="admin-input"
+                        required
+                    />
+                </div>
+                
+                <button type="submit" class="modal-submit-btn" id="researchBtn">
+                    Research & Add Comic
+                </button>
+            </form>
+            
+            <div id="researchStatus" class="research-status"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
