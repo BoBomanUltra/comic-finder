@@ -22,18 +22,79 @@
         <!-- Main search section -->
         <div class="search-section">
             <form id="searchForm">
-                <div class="search-input-container">
+                <!-- Helper note -->
+                <div class="helper-note">
+                    <p>💡 Only fill in information you know for certain! It's better to leave fields blank than to provide misleading content.</p>
+                </div>
+        
+                <!-- Story Description -->
+                <div class="form-group">
+                    <label for="storyDescription">Description of the Story</label>
                     <textarea 
-                        id="comicDescription" 
-                        placeholder="Describe your comic... (e.g., 'MC can level up like a game, set in Korea with dungeons')"
-                        rows="4"
-                        required
+                        id="storyDescription" 
+                        placeholder="e.g., MC gets betrayed and goes back in time to get revenge..."
+                        rows="3"
                     ></textarea>
                 </div>
+        
+                <!-- Character Description -->
+                <div class="form-group">
+                    <label for="characterDescription">Description of the Characters</label>
+                    <textarea 
+                        id="characterDescription" 
+                        placeholder="e.g., MC has black hair, there's a blonde rival, female lead is a knight..."
+                        rows="3"
+                    ></textarea>
+                </div>
+        
+                                <!-- Setting (with tags) -->
+                <div class="form-group">
+                    <label for="setting">Setting</label>
+                    <div class="tags-container" id="settingTags"></div>
+                    <input 
+                        type="text" 
+                        id="setting" 
+                        placeholder="Start typing... (e.g., isekai, modern, medieval)"
+                        autocomplete="off"
+                    />
+                    <div id="settingDropdown" class="dropdown-menu"></div>
+                </div>
+
+                <!-- Genres (with tags) -->
+                <div class="form-group">
+                    <label for="genres">Genres</label>
+                    <div class="tags-container" id="genresTags"></div>
+                    <input 
+                        type="text" 
+                        id="genres" 
+                        placeholder="Start typing... (e.g., action, romance, fantasy)"
+                        autocomplete="off"
+                    />
+                    <div id="genresDropdown" class="dropdown-menu"></div>
+                </div>
+                        
+                <!-- Comic Type (checkboxes) -->
+                <div class="form-group">
+                    <label>Comic Type</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="comicType" value="manga" id="manga">
+                            <span>Manga (Japanese)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="comicType" value="manhwa" id="manhwa">
+                            <span>Manhwa (Korean)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="comicType" value="manhua" id="manhua">
+                            <span>Manhua (Chinese)</span>
+                        </label>
+                    </div>
+                </div>
+        
                 <button type="submit" class="search-btn">Find My Comic →</button>
             </form>
         </div>
-
         
     </div>
 
