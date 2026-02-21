@@ -1,53 +1,90 @@
-// Comic Finder - Chat Page JavaScript
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Chat page loaded!');
     
     const backBtn = document.getElementById('backBtn');
     const userQueryElement = document.getElementById('userQuery');
     
-    // Get the search query from sessionStorage
     const query = sessionStorage.getItem('comicQuery');
     
     if (query) {
-        // Display user's original query
-        userQueryElement.textContent = query;
+        const formData = JSON.parse(query);
+            
+        const formattedQuery = `Story: ${formData.storyDescription || 'Not specified'}
         
-        // TODO: Send query to backend Agent B
-        // This will be implemented in Phase 5
+Character(s): ${formData.characterDescription || 'Not specified'}
+
+Setting(s): ${formData.settings && formData.settings.length > 0 ? formData.settings.join(', ') : 'Not specified'}
+
+Genre(s): ${formData.genres && formData.genres.length > 0 ? formData.genres.join(', ') : 'Not specified'}
+
+Comic Type(s): ${formData.comicTypes && formData.comicTypes.length > 0 ? formData.comicTypes.join(', ') : 'Not specified'}`.trim();
+            
+        userQueryElement.textContent = formattedQuery;
+        
         setTimeout(() => {
-            simulateAIResponse();
+            callAI();
         }, 1500);
     } else {
-        // No query found, redirect back to home
         window.location.href = 'index.html';
     }
     
-    // Back button functionality
     backBtn.addEventListener('click', () => {
         window.location.href = 'index.html';
     });
 });
 
-// Temporary function to simulate AI response
-// We'll replace this in Phase 5 with actual backend call
-function simulateAIResponse() {
+async function callAI() {
     const chatMessages = document.getElementById('chatMessages');
     const loadingMessage = chatMessages.querySelector('.ai-message');
     
-    // Remove loading message
-    loadingMessage.remove();
-    
-    // Add simulated AI response
-    const aiResponse = document.createElement('div');
-    aiResponse.className = 'message ai-message';
-    aiResponse.innerHTML = `
-        <div class="message-content">
-            <p><strong>AI Response (Simulated - Coming in Phase 5!):</strong></p>
-            <p>I'm still learning! Once we connect Agent B in Phase 5, I'll be able to search our database and find comics that match your description.</p>
-            <p>For now, this is just a preview of how the chat will look.</p>
-        </div>
-    `;
-    
-    chatMessages.appendChild(aiResponse);
+    try {
+        const response = await fetch('http://localhost:3000/api/test-ai', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        loadingMessage.remove();
+        
+        if (!data.success) {
+            const errorResponse = document.createElement('div');
+            errorResponse.className = 'message ai-message';
+            errorResponse.innerHTML = `
+                <div class="message-content">
+                    <p><strong>Error:</strong></p>
+                    <p>${data.error}</p>
+                </div>
+            `;
+            chatMessages.appendChild(errorResponse);
+            return;
+        }
+        
+        const aiResponse = document.createElement('div');
+        aiResponse.className = 'message ai-message';
+        aiResponse.innerHTML = `
+            <div class="message-content">
+                <p><strong>AI Response:</strong></p>
+                <p>${data.aiResponse}</p>
+            </div>
+        `;
+        
+        chatMessages.appendChild(aiResponse);
+        
+    } catch (error) {
+        loadingMessage.remove();
+        
+        const errorResponse = document.createElement('div');
+        errorResponse.className = 'message ai-message';
+        errorResponse.innerHTML = `
+            <div class="message-content">
+                <p><strong>Error:</strong></p>
+                <p>Could not connect to AI. Is the backend running?</p>
+            </div>
+        `;
+        
+        chatMessages.appendChild(errorResponse);
+    }
 }

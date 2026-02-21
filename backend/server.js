@@ -1,22 +1,19 @@
-// This is our backend server - the "kitchen" of our restaurant
-// It listens for requests and sends back responses
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+require('dotenv').config();
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { checkAndIncrement } = require('./rateLimiter');
 
-// Create our server
 const app = express();
 const PORT = 3000;
 
-// Middleware - think of these as "rules" for how the server operates
-app.use(cors()); // Allows frontend and backend to talk to each other
-app.use(express.json()); // Lets us read JSON data from requests
-
-// Serve the frontend files (HTML, CSS, JS)
+app.use(cors());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// TEST ROUTE - just to see if server is working
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 app.get('/api/test', (req, res) => {
     res.json({ 
         message: 'Backend is working!',
@@ -24,8 +21,38 @@ app.get('/api/test', (req, res) => {
     });
 });
 
-// Start the server
+app.post('/api/test-ai', async (req, res) => {
+    const rateCheck = checkAndIncrement('agentB');
+    
+    if (!rateCheck.allowed) {
+        return res.status(429).json({
+            success: false,
+            error: rateCheck.message,
+            usage: rateCheck
+        });
+    }
+    
+    try {
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        
+        const prompt = "Say hello in a friendly way and confirm you're working!";
+        const result = await model.generateContent(prompt);
+        const response = result.response.text();
+        
+        res.json({ 
+            success: true,
+            aiResponse: response,
+            usage: rateCheck
+        });
+    } catch (error) {
+        console.error('AI Error:', error);
+        res.status(500).json({ 
+            success: false,
+            error: error.message 
+        });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📝 Try visiting: http://localhost:${PORT}/api/test`);
 });
