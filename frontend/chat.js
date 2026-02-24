@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const backBtn = document.getElementById('backBtn');
     const userQueryElement = document.getElementById('userQuery');
+    const chatMessages = document.getElementById('chatMessages');
     
     const query = sessionStorage.getItem('comicQuery');
     
@@ -21,8 +22,9 @@ Comic Type(s): ${formData.comicTypes && formData.comicTypes.length > 0 ? formDat
             
         userQueryElement.textContent = formattedQuery;
         
+        // Call Agent B after short delay
         setTimeout(() => {
-            callAI();
+            searchComics(formData);
         }, 1500);
     } else {
         window.location.href = 'index.html';
@@ -33,20 +35,28 @@ Comic Type(s): ${formData.comicTypes && formData.comicTypes.length > 0 ? formDat
     });
 });
 
-async function callAI() {
+async function searchComics(formData) {
     const chatMessages = document.getElementById('chatMessages');
     const loadingMessage = chatMessages.querySelector('.ai-message');
     
     try {
-        const response = await fetch('http://localhost:3000/api/test-ai', {
+        const response = await fetch('http://localhost:3000/api/search-comics', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                storyDescription: formData.storyDescription || '',
+                characterDescription: formData.characterDescription || '',
+                genres: formData.genres || [],
+                settings: formData.settings || [],
+                comicTypes: formData.comicTypes || []
+            })
         });
         
         const data = await response.json();
         
+        // Remove loading message
         loadingMessage.remove();
         
         if (!data.success) {
@@ -62,16 +72,47 @@ async function callAI() {
             return;
         }
         
-        const aiResponse = document.createElement('div');
-        aiResponse.className = 'message ai-message';
-        aiResponse.innerHTML = `
+        // Display results
+        if (data.matches.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'message ai-message';
+            noResults.innerHTML = `
+                <div class="message-content">
+                    <p><strong>No comics found 😔</strong></p>
+                    <p>${data.message || 'No comics match your description.'}</p>
+                    <p>Try:</p>
+                    <ul>
+                        <li>Removing some genre/setting filters</li>
+                        <li>Being less specific in your description</li>
+                        <li>Using different keywords</li>
+                    </ul>
+                </div>
+            `;
+            chatMessages.appendChild(noResults);
+            return;
+        }
+        
+        // Display matched comics
+        const resultsDiv = document.createElement('div');
+        resultsDiv.className = 'message ai-message';
+        
+        let html = `
             <div class="message-content">
-                <p><strong>AI Response:</strong></p>
-                <p>${data.aiResponse}</p>
-            </div>
+                <p><strong>Found ${data.matches.length} comic(s):</strong></p>
         `;
         
-        chatMessages.appendChild(aiResponse);
+        data.matches.forEach((match, index) => {
+            html += `
+                <div class="comic-result">
+                    <h3>${index + 1}. <a href="${match.source_url}" target="_blank">${match.primary_name}</a></h3>
+                    <p>${match.match_reason}</p>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        resultsDiv.innerHTML = html;
+        chatMessages.appendChild(resultsDiv);
         
     } catch (error) {
         loadingMessage.remove();
@@ -81,10 +122,12 @@ async function callAI() {
         errorResponse.innerHTML = `
             <div class="message-content">
                 <p><strong>Error:</strong></p>
-                <p>Could not connect to AI. Is the backend running?</p>
+                <p>Could not connect to backend: ${error.message}</p>
             </div>
         `;
         
         chatMessages.appendChild(errorResponse);
     }
 }
+
+

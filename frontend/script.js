@@ -25,16 +25,70 @@ document.addEventListener('DOMContentLoaded', () => {
     const researchBtn = document.getElementById('researchBtn');
     
     const settingOptions = [
-        'Isekai', 'Time Regression', 'Reincarnation', 'Medieval', 'Fantasy', 
-        'Modern', 'Post-Apocalyptic', 'Sci-Fi', 'Historical', 'School', 
-        'Dungeon/Tower', 'Cultivation', 'Game World', 'Virtual Reality'
+        // Time/Dimension
+        'Isekai', 
+        'Regression', 
+        'Reincarnation', 
+        'Time Travel',
+        
+        // Era
+        'Medieval', 
+        'Modern', 
+        'Historical', 
+        'Post-Apocalyptic', 
+        'Futuristic',
+        
+        // World Type
+        'Fantasy', 
+        'Sci-Fi', 
+        'Murim', 
+        'Cultivation',
+        'Virtual Reality',
+        
+        // Setting Location
+        'School', 
+        'Academy',
+        'Dungeon', 
+        'Tower',
+        
+        // Story Type
+        'Villainess', 
+        'Overpowered MC', 
+        'Weak to Strong',
+        'Revenge'
     ];
     
     const genreOptions = [
-        'Action', 'Adventure', 'Romance', 'Comedy', 'Drama', 'Fantasy',
-        'Sci-Fi', 'Horror', 'Mystery', 'Thriller', 'Slice of Life',
-        'Supernatural', 'Martial Arts', 'Psychological', 'Tragedy',
-        'Seinen', 'Shounen', 'Shoujo', 'Josei'
+        // Core Genres
+        'Action', 
+        'Adventure', 
+        'Romance', 
+        'Comedy', 
+        'Drama',
+        
+        // Tone
+        'Fantasy',
+        'Sci-Fi', 
+        'Horror', 
+        'Mystery', 
+        'Thriller', 
+        'Psychological',
+        'Tragedy',
+        
+        // Style
+        'Slice of Life',
+        'Supernatural', 
+        'Martial Arts',
+        
+        // Demographics
+        'Seinen', 
+        'Shounen', 
+        'Shoujo', 
+        'Josei',
+        
+        // Special
+        'BL',
+        'GL'
     ];
     
     let selectedSettings = [];
@@ -201,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Close password modal, open admin panel
                 adminModal.classList.remove('show');
                 adminPanel.classList.add('show');
-                document.getElementById('comicName').value = '';
+                document.getElementById('comicUrl').value = '';
                 researchStatus.textContent = '';
                 researchStatus.className = 'research-status';
             } else {
@@ -228,10 +282,10 @@ document.addEventListener('DOMContentLoaded', () => {
     comicResearchForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const comicName = document.getElementById('comicName').value.trim();
+        const comicUrl = document.getElementById('comicUrl').value.trim();
         
         // Show loading state
-        researchStatus.textContent = 'Agent A is researching "' + comicName + '"... This may take 30-60 seconds.';
+        researchStatus.textContent = 'Agent A is researching this comic... This may take 30-60 seconds.';
         researchStatus.className = 'research-status loading';
         researchBtn.disabled = true;
         researchBtn.textContent = 'Researching...';
@@ -242,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ comicName })
+                body: JSON.stringify({ comicUrl })
             });
             
             const data = await response.json();
@@ -253,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 researchStatus.className = 'research-status success';
                 
                 // Reset form for next entry
-                document.getElementById('comicName').value = '';
+                document.getElementById('comicUrl').value = '';
             } else {
                 // Error
                 researchStatus.textContent = '✗ Error: ' + data.error;
@@ -268,4 +322,4 @@ document.addEventListener('DOMContentLoaded', () => {
             researchBtn.textContent = 'Research & Add Comic';
         }
     });
-});       
+});    

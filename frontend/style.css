@@ -620,3 +620,36 @@ textarea::placeholder {
 }
 
 
+/* Comic result styling */
+.comic-result {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #F9F7F7;
+    border-left: 3px solid #3F72AF;
+    border-radius: 0;
+}
+
+.comic-result h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.comic-result h3 a {
+    color: #3F72AF;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.comic-result h3 a:hover {
+    text-decoration: underline;
+    color: #2E5A8F;
+}
+
+.comic-result p {
+    margin: 0;
+    color: #112D4E;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+
