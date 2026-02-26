@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const LIMITS = {
-    agentA: 10,
+    agentA: 100,
     agentB: 10
 };
 

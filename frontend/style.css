@@ -206,7 +206,6 @@ textarea::placeholder {
 .loading {
     display: flex;
     align-items: center;
-    gap: 8px;
     color: #3F72AF;
     font-weight: 500;
 }
@@ -650,6 +649,60 @@ textarea::placeholder {
     color: #112D4E;
     font-size: 0.9rem;
     opacity: 0.8;
+}
+
+
+/* Grid Checkbox Styles */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.grid-checkbox-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: #F9F7F7;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+    color: #112D4E;
+    text-align: center;
+    user-select: none;
+}
+
+.grid-checkbox-label:hover {
+    background: #E8EEF5;
+    border-color: #3F72AF;
+}
+
+.grid-checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.grid-checkbox-label input[type="checkbox"]:checked + span {
+    color: white;
+}
+
+.grid-checkbox-label input[type="checkbox"]:checked ~ * {
+    color: white;
+}
+
+.grid-checkbox-label:has(input[type="checkbox"]:checked) {
+    background: #3F72AF;
+    border-color: #3F72AF;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .checkbox-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+    }
 }
 
 

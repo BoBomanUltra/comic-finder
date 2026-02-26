@@ -4,13 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchForm = document.getElementById('searchForm');
     const uploadBtn = document.getElementById('uploadBtn');
     
-    const settingInput = document.getElementById('setting');
-    const genresInput = document.getElementById('genres');
-    const settingDropdown = document.getElementById('settingDropdown');
-    const genresDropdown = document.getElementById('genresDropdown');
-    const settingTagsContainer = document.getElementById('settingTags');
-    const genresTagsContainer = document.getElementById('genresTags');
-    
     // Admin modal elements
     const adminModal = document.getElementById('adminModal');
     const closeModal = document.getElementById('closeModal');
@@ -91,115 +84,41 @@ document.addEventListener('DOMContentLoaded', () => {
         'GL'
     ];
     
-    let selectedSettings = [];
-    let selectedGenres = [];
-    
-    function createTag(text, container, selectedArray, input, dropdown, allOptions) {
-        const tag = document.createElement('div');
-        tag.className = 'tag';
-        
-        const tagText = document.createElement('span');
-        tagText.className = 'tag-text';
-        tagText.textContent = text;
-        
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'tag-remove';
-        removeBtn.innerHTML = '×';
-        removeBtn.type = 'button';
-        
-        removeBtn.addEventListener('click', () => {
-            tag.remove();
-            const index = selectedArray.indexOf(text);
-            if (index > -1) {
-                selectedArray.splice(index, 1);
-            }
-            updateDropdown(input, dropdown, allOptions, selectedArray);
-        });
-        
-        tag.appendChild(tagText);
-        tag.appendChild(removeBtn);
-        container.appendChild(tag);
-    }
-    
-    function addTag(text, container, selectedArray, input, dropdown, allOptions) {
-        if (!text || selectedArray.includes(text)) return;
-        
-        selectedArray.push(text);
-        createTag(text, container, selectedArray, input, dropdown, allOptions);
-        input.value = '';
-        updateDropdown(input, dropdown, allOptions, selectedArray);
-    }
-    
-    function updateDropdown(input, dropdown, allOptions, selectedArray) {
-        const filter = input.value.toLowerCase();
-        const available = allOptions.filter(opt => !selectedArray.includes(opt));
-        const filtered = available.filter(opt => 
-            opt.toLowerCase().includes(filter)
-        );
-        
-        showDropdown(dropdown, filtered, input, selectedArray);
-    }
-    
-    function showDropdown(dropdown, options, input, selectedArray) {
-        dropdown.innerHTML = '';
-        
-        if (options.length === 0) {
-            dropdown.classList.remove('show');
-            return;
-        }
+    // Generate grid checkboxes
+    function generateCheckboxGrid(options, containerId) {
+        const container = document.getElementById(containerId);
         
         options.forEach(option => {
-            const item = document.createElement('div');
-            item.className = 'dropdown-item';
-            item.textContent = option;
+            const label = document.createElement('label');
+            label.className = 'grid-checkbox-label';
             
-            item.addEventListener('click', () => {
-                const container = input.id === 'setting' ? settingTagsContainer : genresTagsContainer;
-                const allOptions = input.id === 'setting' ? settingOptions : genreOptions;
-                addTag(option, container, selectedArray, input, dropdown, allOptions);
-            });
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = option;
+            checkbox.name = containerId;
             
-            dropdown.appendChild(item);
-        });
-        
-        dropdown.classList.add('show');
-    }
-    
-    function setupTagInput(input, dropdown, container, allOptions, selectedArray) {
-        input.addEventListener('focus', () => {
-            updateDropdown(input, dropdown, allOptions, selectedArray);
-        });
-        
-        input.addEventListener('input', () => {
-            updateDropdown(input, dropdown, allOptions, selectedArray);
-        });
-        
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && input.value.trim()) {
-                e.preventDefault();
-                const value = input.value.trim();
-                const match = allOptions.find(opt => 
-                    opt.toLowerCase() === value.toLowerCase()
-                );
-                if (match) {
-                    addTag(match, container, selectedArray, input, dropdown, allOptions);
-                }
-            }
-        });
-        
-        document.addEventListener('click', (e) => {
-            if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.remove('show');
-            }
+            const span = document.createElement('span');
+            span.textContent = option;
+            
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            container.appendChild(label);
         });
     }
     
-    setupTagInput(settingInput, settingDropdown, settingTagsContainer, settingOptions, selectedSettings);
-    setupTagInput(genresInput, genresDropdown, genresTagsContainer, genreOptions, selectedGenres);
+    // Initialize grids
+    generateCheckboxGrid(settingOptions, 'settingGrid');
+    generateCheckboxGrid(genreOptions, 'genresGrid');
     
     // Search form handler
     searchForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        const selectedSettings = Array.from(document.querySelectorAll('#settingGrid input[type="checkbox"]:checked'))
+            .map(cb => cb.value);
+        
+        const selectedGenres = Array.from(document.querySelectorAll('#genresGrid input[type="checkbox"]:checked'))
+            .map(cb => cb.value);
         
         const formData = {
             storyDescription: document.getElementById('storyDescription').value.trim(),
@@ -284,8 +203,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const comicUrl = document.getElementById('comicUrl').value.trim();
         
+        const urlPattern = /^https:\/\/comix\.to\/title\/[a-z0-9]+-[a-z0-9-]+$/i;
+        if (!urlPattern.test(comicUrl)) {
+            researchStatus.textContent = '✗ Error: Please enter a valid comix.to URL in the format:\nhttps://comix.to/title/xxxxx-comic-name';
+            researchStatus.className = 'research-status error';
+            return;
+        }
+
         // Show loading state
-        researchStatus.textContent = 'Agent A is researching this comic... This may take 30-60 seconds.';
+        researchStatus.textContent = 'Agent A is researching this comic. This may take 30-60 seconds';
         researchStatus.className = 'research-status loading';
         researchBtn.disabled = true;
         researchBtn.textContent = 'Researching...';
@@ -322,4 +248,4 @@ document.addEventListener('DOMContentLoaded', () => {
             researchBtn.textContent = 'Research & Add Comic';
         }
     });
-});    
+});

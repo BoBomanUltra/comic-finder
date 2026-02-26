@@ -101,6 +101,15 @@ app.post('/api/research-comic', async (req, res) => {
             error: rateCheck.message
         });
     }
+
+    // VALIDATE URL FORMAT
+    const urlPattern = /^https:\/\/comix\.to\/title\/[a-z0-9]+-[a-z0-9-]+$/i;
+    if (!urlPattern.test(comicUrl)) {
+        return res.status(400).json({
+            success: false,
+            error: 'Invalid comix.to URL format. Expected: https://comix.to/title/xxxxx-comic-name'
+        });
+    }
     
     try {
         // Extract comic name from URL for duplicate check
@@ -313,7 +322,7 @@ Return ONLY a JSON array with NO explanations, preamble, or markdown:
   {
     "primary_name": "Comic Title",
     "source_url": "https://comix.to/...",
-    "match_reason": "One sentence explaining why this matches (max 20 words)"
+    "match_reason": "One sentence explaining why this matches (50-100 words)"
   }
 ]
 
@@ -379,6 +388,8 @@ ${comicsContext}`
         });
     }
 });
+
+
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
