@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordError.textContent = '';
         
         try {
-            const response = await fetch('http://localhost:3000/api/verify-admin', {
+            const response = await fetch('/api/verify-admin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         researchBtn.textContent = 'Researching...';
         
         try {
-            const response = await fetch('http://localhost:3000/api/research-comic', {
+            const response = await fetch('/api/research-comic', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

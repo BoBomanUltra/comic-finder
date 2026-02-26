@@ -40,7 +40,7 @@ async function searchComics(formData) {
     const loadingMessage = chatMessages.querySelector('.ai-message');
     
     try {
-        const response = await fetch('http://localhost:3000/api/search-comics', {
+        const response = await fetch('/api/search-comics', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
